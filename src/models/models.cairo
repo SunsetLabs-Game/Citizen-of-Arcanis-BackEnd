@@ -28,6 +28,15 @@ pub struct Position {
     pub vec: Vec2,
 }
 
+#[derive(Copy, Drop, Serde)]
+#[dojo::model]
+pub struct Pet {
+    #[key]
+    pub pet_id: u32,
+    pub pet_name: felt252,
+    pub pet_type: felt252,
+    pub owner_id: felt252,
+}
 
 #[derive(Serde, Copy, Drop, Introspect)]
 pub enum Direction {
@@ -73,9 +82,21 @@ impl Vec2Impl of Vec2Trait {
     }
 }
 
+#[generate_trait]
+impl PetImpl of PetTrait {
+    fn create_pet(pet_id: u32, pet_name: felt252, pet_type: felt252, owner_id: felt252) -> Pet {
+        Pet {
+            pet_id: pet_id,
+            pet_name: pet_name,
+            pet_type: pet_type,
+            owner_id: owner_id,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{Position, Vec2, Vec2Trait};
+    use super::{Pet, PetTrait, Position, Vec2, Vec2Trait};
 
     #[test]
     fn test_vec_is_zero() {
@@ -86,5 +107,20 @@ mod tests {
     fn test_vec_is_equal() {
         let position = Vec2 { x: 420, y: 0 };
         assert(position.is_equal(Vec2 { x: 420, y: 0 }), 'not equal');
+    }
+
+    #[test]
+    fn test_create_pet() {
+        let player_id = 1; 
+        let pet_id = 1;    
+        let pet_name = 'Buddy';
+        let pet_type = 'Dog';
+
+        let pet = PetTrait::create_pet(pet_id, pet_name, pet_type, player_id);
+
+        assert(pet.pet_id == pet_id, 'Pet ID not correct');
+        assert(pet.pet_name == pet_name, 'Pet name not correct');
+        assert(pet.pet_type == pet_type, 'Pet type not correct');
+        assert(pet.owner_id == player_id, 'Owner ID not correct');
     }
 }

@@ -16,10 +16,6 @@ mod components {
     mod utils;
 }
 
-
-
-// mod models;
-
-// mod tests {
-//     mod test_world;
-// }
+mod models {
+    mod models;
+}
